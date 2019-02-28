@@ -1,0 +1,22 @@
+﻿<Mah:MetroWindow x:Class="WpfPdfTranslator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:Mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        mc:Ignorable="d"
+        Title="一覧" Height="115.329" Width="357.22"
+        GlowBrush="Blue"
+        BorderThickness="0"
+        >
+
+    <Grid>
+        <!-- プログレスリングとオーバーレイを追加 -->
+        <Rectangle x:Name="rec_overlay" />
+        <Button x:Name="pdfSelect" Content="英語pdfを選択" HorizontalAlignment="Left" Margin="37,33,0,0" VerticalAlignment="Top" Width="125" Click="PdfSelect_Click"/>
+        <Button x:Name="outputSelect" Content="保存先を選択" IsEnabled="False" Margin="208,33,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="112" Click="OutputSelect_Click"/>
+        <Controls:ProgressRing x:Name="loading_image" IsActive="False" />
+    </Grid>
+</Mah:MetroWindow>
