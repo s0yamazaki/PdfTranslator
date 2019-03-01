@@ -38,7 +38,7 @@ namespace PdfTranslator
                 
                 var str = srctext.GetText(0, srctext.CountChars);
                 var strs = str.Replace("\r\n", " ").Replace(". ", ".\r\n").Split('\n');
-                var tasks = Combine(strs, 100, 300).Select(async src =>
+                var tasks = Combine(strs, 150, 300).Select(async src =>
                 {
                     var get_url = url + string.Format("?text={0}&source=en&target=ja", Uri.EscapeDataString(src));
                     WriteLine(get_url);
@@ -76,24 +76,28 @@ namespace PdfTranslator
                     foreach (var (src, translated) in pageTrans)
                     {
                         var info = page.Text.GetTextInfo(count, src.Length);
-                        count += src.Length;
-                        var rect = info.Rects.Aggregate((l, r) => new FS_RECTF(
+                        var preinfo = page.Text.GetTextInfo(Math.Max(count- 99, 0), 100);
+                        count += src.Length + 2;
+                        var inforect = info.Rects.Aggregate((l, r) => new FS_RECTF(
                             Math.Min(l.left, r.left),
-                            Math.Max(l.top, r.top),
-                            Math.Max(l.right, r.right),
+                            l.top,
+                            l.right,
                             Math.Min(l.bottom, r.bottom)));
-                        
-                        var ra = new Rectangle(rect.left, rect.bottom, rect.right, rect.top);
+                        var preleftrects = preinfo.Rects.Reverse().ToArray();
+                        var preleft = preleftrects
+                            .TakeWhile(x => Math.Abs(x.bottom - preleftrects[0].bottom) <= 1.0)
+                            .Aggregate(float.MaxValue, (l, r) => Math.Min(l, r.left));
+                        var rect = new Rectangle(Math.Min(inforect.left, preleft), inforect.bottom, inforect.right, inforect.top);
 
-                        WriteLine(ra);
-                        ra.Left -= 20;
+                        WriteLine(translated);
+                        rect.Left -= 20;
                         var a = PDF.PdfAnnotation.CreateText(
                                     writer,
-                                    ra,
+                                    rect,
                                     "訳文",
                                     translated,
                                     false,
-                                    "訳文");
+                                    null);
                         writer.AddAnnotation(a);
                     }
                     document.NewPage();
